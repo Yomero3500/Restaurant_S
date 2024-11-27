@@ -20,7 +20,7 @@ public class Chef extends Entity {
         imageView.setFitWidth(50); // Ajusta el ancho según sea necesario
         imageView.setFitHeight(50); // Ajusta la altura según sea necesario
 
-
+        // Construir y adjuntar la entidad con la imagen
         FXGL.entityBuilder(data)
                 .view(imageView) // Usar ImageView en lugar de Circle
                 .type(EntityType.CHEF)
