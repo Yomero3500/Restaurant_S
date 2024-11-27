@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
@@ -34,16 +35,31 @@ public class RestaurantView extends FXGLMenu {
         VBox mainContainer = new VBox(50);
         mainContainer.setAlignment(Pos.CENTER);
 
-        // Título del menú
+        // Título del menú con estilo cursivo
         Text title = new Text("Simulador de Restaurante");
-        title.setFont(Font.font(80));
+        title.setFont(Font.font("Verdana", FontPosture.ITALIC, 80));  // Estilo cursivo y tamaño grande
         title.setFill(Color.WHITE);
+
+        // Agregar contorno para mejorar la visibilidad
+        title.setStroke(Color.BLACK);
+        title.setStrokeWidth(2);
+
+        // Aplicar sombra
         DropShadow dropShadow = new DropShadow();
-        dropShadow.setRadius(5.0);
-        dropShadow.setOffsetX(3.0);
-        dropShadow.setOffsetY(3.0);
+        dropShadow.setRadius(10.0);
+        dropShadow.setOffsetX(5.0);
+        dropShadow.setOffsetY(5.0);
         dropShadow.setColor(Color.BLACK);
         title.setEffect(dropShadow);
+
+        // Efecto adicional de animación al pasar el ratón (opcional)
+        title.setOnMouseEntered(e -> {
+            title.setFill(Color.GOLD);  // Cambiar a dorado al pasar el ratón
+        });
+
+        title.setOnMouseExited(e -> {
+            title.setFill(Color.WHITE);  // Restaurar el color original
+        });
 
         // Botones del menú con texto sobre la imagen
         Button btnPlay = createImageButton("Iniciar Simulación", "/assets/icons/button.png");
@@ -100,5 +116,4 @@ public class RestaurantView extends FXGLMenu {
 
         return button;
     }
-
 }
