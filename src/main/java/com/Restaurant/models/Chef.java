@@ -22,7 +22,7 @@ public class Chef extends Entity {
 
         // Construir y adjuntar la entidad con la imagen
         FXGL.entityBuilder(data)
-                .view(imageView) // Usar ImageView en lugar de Circle
+                .view(imageView)
                 .type(EntityType.CHEF)
                 .buildAndAttach();
     }
