@@ -1,5 +1,6 @@
 package com.Restaurant;
 
+import com.Restaurant.models.*; // Asegúrate de importar tus modelos
 import com.Restaurant.factories.RestaurantFactory;
 import com.Restaurant.ui.RestaurantView;
 import com.almasb.fxgl.app.GameApplication;
@@ -13,9 +14,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main extends GameApplication {
+
+    private List<Entity> mesas; // Lista para almacenar las entidades de las mesas
+    private Lock lockMesas;        // Lock para sincronizar el acceso a la lista de mesas
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -38,9 +49,25 @@ public class Main extends GameApplication {
 
     @Override
     protected void initGame() {
+        mesas = new ArrayList<>();
+        ordenesPendientes = new ConcurrentLinkedQueue<>();
+        comidasListas = new ConcurrentLinkedQueue<>();
+        lock = new ReentrantLock();
+        ordenesDisponibles = lock.newCondition();
+        comidasDisponibles = lock.newCondition();
+
         createGameEntities();
         FXGL.getGameWorld().addEntityFactory(new RestaurantFactory());
         spawnInitialEntities();
+
+        // Iniciar el hilo de los chefs
+        Thread hiloChefs = new Thread(this::runChefs);
+        hiloChefs.setDaemon(true);
+        hiloChefs.start();
+
+
+        FXGL.run(() -> generarCliente(), Duration.seconds(2));
+
     }
 
     private void createGameEntities() {
@@ -73,10 +100,16 @@ public class Main extends GameApplication {
     private void createTables() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                FXGL.entityBuilder()
+                Entity mesaEntity = FXGL.entityBuilder()
                         .at(300 + j * 150, 110 + i * 120)
                         .view(createImageView("/assets/textures/table.png", 70, 70))
                         .buildAndAttach();
+
+                Mesa mesa = new Mesa(mesaEntity);
+                mesas.add(mesa);
+
+
+
             }
         }
     }
@@ -118,7 +151,7 @@ public class Main extends GameApplication {
     }
 
     private void spawnInitialEntities() {
-        spawnWaiters(3);
+        spawnWaiters(2);
         spawnChefs(2);
         spawnClients(3);
         spawnReceptionist();
@@ -132,4 +165,99 @@ public class Main extends GameApplication {
         imageView.setSmooth(true);
         return imageView;
     }
+    private void generarClientesPoisson() {
+        double lambda = 1; // Parámetro lambda para la distribución de Poisson (ajusta según sea necesario)
+
+
+        while (true) {
+            try {
+
+                long tiempoEspera = (long) (-Math.log(1.0 - Math.random()) / lambda); // Poisson
+
+                TimeUnit.SECONDS.sleep(tiempoEspera);
+                SpawnData spawnData = new SpawnData(1210, 190); // Posición inicial del cliente
+
+                FXGL.spawn("client", spawnData);
+
+
+                // Agrega el cliente a la recepcionista
+                Optional<Entity> receptionist = FXGL.getGameWorld().getEntitiesByType(EntityType.RECEPTIONIST).findFirst();
+
+                receptionist.ifPresent(r -> r.getComponent(Receptionist.class).agregarCliente(
+                        (Client) FXGL.getGameWorld().getEntitiesByType(EntityType.CLIENT).get(
+                                FXGL.getGameWorld().getEntitiesByType(EntityType.CLIENT).size()-1)));
+
+
+
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break; // Sale del bucle si el hilo es interrumpido
+            }
+
+        }
+    }
+
+
+
+
+
+    //Métodos para controlar el estado de las mesas (usados por Waiter, Client y Receptionist)
+
+    public synchronized boolean isMesaDisponible(Entity mesa) {
+        lockMesas.lock();
+        try {
+            return !mesa.getProperties().getBoolean("ocupada");
+        } finally {
+            lockMesas.unlock();
+        }
+
+    }
+
+    public synchronized void ocuparMesa(Entity mesa, Client cliente) {
+        lockMesas.lock();
+        try {
+            mesa.getProperties().setValue("ocupada", true);
+            mesa.getProperties().setValue("cliente", cliente); // Asocia el cliente a la mesa
+        } finally {
+            lockMesas.unlock();
+        }
+    }
+
+
+    public synchronized void liberarMesa(Entity mesa) {
+        lockMesas.lock();
+        try {
+            mesa.getProperties().setValue("ocupada", false);
+            mesa.getProperties().setValue("cliente", null); // Desasocia el cliente de la mesa
+
+            Optional<Entity> receptionist = FXGL.getGameWorld().getEntitiesByType(EntityType.RECEPTIONIST).findFirst();
+            receptionist.ifPresent(r -> r.getComponent(Receptionist.class).notificarMesaDisponible()); // Notificar a la recepcionista
+
+        } finally {
+            lockMesas.unlock();
+        }
+
+    }
+
+
+
+    public Client getClienteEnMesa(Entity mesa){
+        lockMesas.lock();
+
+        try {
+
+            return  (Client) mesa.getProperties().getValue("cliente");
+
+
+        }finally {
+
+            lockMesas.unlock();
+
+        }
+
+
+    }
+
+
 }
