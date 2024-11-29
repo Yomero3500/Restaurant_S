@@ -1,29 +1,45 @@
 package com.Restaurant.models;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import com.almasb.fxgl.dsl.FXGL;
 
-public class Chef extends Entity {
-    public Chef(SpawnData data) {
-        // Cargar la imagen
-        Image chefImage = new Image("/assets/textures/chef.png"); // Ruta de la imagen
+import static com.almasb.fxgl.dsl.FXGL.animationBuilder;
 
-        // Crear la vista de la entidad usando ImageView
-        ImageView imageView = new ImageView(chefImage);
+public class Chef {
 
-        // Configurar la escala de la imagen si es necesario
-        imageView.setFitWidth(50); // Ajusta el ancho según sea necesario
-        imageView.setFitHeight(50); // Ajusta la altura según sea necesario
+    private boolean cocinando = false;
+    private Entity cocineroEntity;
 
-        // Construir y adjuntar la entidad con la imagen
-        FXGL.entityBuilder(data)
-                .view(imageView) // Usar ImageView en lugar de Circle
-                .type(EntityType.CHEF)
+    public Entity crearCocinero(double x, double y) {
+        cocineroEntity = FXGL.entityBuilder()
+                .at(x, y)
+                .viewWithBBox(FXGL.texture("chef.png"))
+                .scale(.15, .15)
                 .buildAndAttach();
+        return cocineroEntity;
     }
-}
+
+    public void cocinar() {
+        if (cocineroEntity == null) return;
+
+        animationBuilder()
+                .duration(javafx.util.Duration.seconds(1))
+                .translate(cocineroEntity)
+                .from(cocineroEntity.getPosition())
+                .to(cocineroEntity.getPosition().subtract(0, 200)) // Ajuste de movimiento hacia abajo
+                .buildAndPlay();
+
+        FXGL.runOnce(() -> {
+            animationBuilder()
+                    .delay(javafx.util.Duration.seconds(5))
+                    .duration(javafx.util.Duration.seconds(1))
+                    .translate(cocineroEntity)
+                    .from(cocineroEntity.getPosition())
+                    .to(cocineroEntity.getPosition().add(0, 200)) // Ajuste de movimiento hacia arriba
+                    .buildAndPlay();
+        }, javafx.util.Duration.seconds(1));
+    }
+
+
+
+} 
