@@ -59,19 +59,10 @@ public class RestaurantFactory {
         chef2.cocinar();
     }
 
-    public static void crearMeseros() {
-        // Crear meseros en diferentes posiciones
-        Waiter mesero1 = new Waiter();
-        mesero1.crearMesero(50, 320);  // Posición del primer mesero
-        mesero1.iniciarServicio(posicionesMesas);
-
-        Waiter mesero2 = new Waiter();
-        mesero2.crearMesero(200, 320);  // Posición del segundo mesero
-        mesero2.iniciarServicio(posicionesMesas);
-
-        Waiter mesero3 = new Waiter();
-        mesero3.crearMesero(350, 320);  // Posición del tercer mesero
-        mesero3.iniciarServicio(posicionesMesas);
+    public static void crearMesero() {
+        Waiter mesero = new Waiter();
+        mesero.crearMesero(50, 320);
+        mesero.iniciarServicio(posicionesMesas);
     }
 
 

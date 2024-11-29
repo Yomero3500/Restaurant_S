@@ -30,7 +30,7 @@ public class Main extends GameApplication {
         
         // Retraso para mesero
         FXGL.runOnce(() -> {
-            RestaurantFactory.crearMeseros();
+            RestaurantFactory.crearMesero();
         }, javafx.util.Duration.seconds(3));
         
         // Retraso para comensales

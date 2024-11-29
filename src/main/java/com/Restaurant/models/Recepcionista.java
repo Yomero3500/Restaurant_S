@@ -2,14 +2,18 @@ package com.Restaurant.models;
 
 import com.almasb.fxgl.entity.Entity;
 import java.util.List;
+import java.util.Queue;
+import java.util.LinkedList;
 import com.almasb.fxgl.dsl.FXGL;
 
 public class Recepcionista {
     private Entity recepcionistaEntity;
     private List<Table> mesas;
+    private Queue<Customer> colaEsperando;
 
     public Recepcionista(List<Table> mesas) {
         this.mesas = mesas;
+        this.colaEsperando = new LinkedList<>();
     }
 
     public Entity crearRecepcionista(double x, double y) {
@@ -21,32 +25,30 @@ public class Recepcionista {
         return recepcionistaEntity;
     }
 
-    public Entity getRecepcionistaEntity() {
-        return recepcionistaEntity;
-    }
-
     public synchronized void asignarMesa(Customer comensal) throws InterruptedException {
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             for (Table mesa : mesas) {
-                System.out.println(
-                        "Comensal " + comensal.getIdComensal() + " intentando ocupar la mesa " + mesa.getIdMesa());
                 if (mesa.ocuparMesa(comensal)) {
-                    System.out.println(
-                            "Comensal " + comensal.getIdComensal() + " asignado a la mesa " + mesa.getIdMesa());
                     comensal.setMesa(mesa);
                     comensal.moverAMesa(mesa.getX(), mesa.getY());
                     return;
                 }
             }
-            System.out.println("Comensal " + comensal.getIdComensal() + " esperando por una mesa.");
+
+            System.out.println("Comensal " + Thread.currentThread().getName() + " no encontró mesa. Esperando...");
+            colaEsperando.add(comensal);
             wait();
         }
     }
 
-    public synchronized void liberarMesa(Table mesa) {
-        mesa.liberarMesa();
-        System.out.println("Mesa " + mesa.getIdMesa() + " ha sido liberada. Notificando comensales...");
-        notifyAll();
+    public synchronized void notificarComensalEnEspera() {
+        if (!colaEsperando.isEmpty()) {
+            Customer siguienteComensal = colaEsperando.poll();
+            notify();
+        }
     }
 
+    public synchronized void liberarMesa(Table mesa) {
+        mesa.liberarMesa(this);
+    }
 }

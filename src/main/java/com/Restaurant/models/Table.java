@@ -21,29 +21,22 @@ public class Table {
 
     public synchronized boolean ocuparMesa(Customer comensal) {
         if (ocupado) {
-            return false; 
+            return false;
         }
-
-        ocupado = true; 
-        this.comensalActual = comensal; 
-        System.out.println("Comensal " + comensal.getIdComensal() + " ocupa la mesa " + id + ".");
+        ocupado = true;
+        comensalActual = comensal;
+        System.out.println("Comensal " + comensal.getIdComensal() + " ocupa la mesa " + id);
         return true;
     }
 
-
-
-    public synchronized void liberarMesa() {
-        System.out.println(ocupado);
+    public synchronized void liberarMesa(Recepcionista recepcionista) {
         if (!ocupado) {
-            System.out.println("Mesa " + id + " ya está libre.");
             return;
         }
-
-        // Liberar la mesa
+        System.out.println("Mesa " + id + " liberada.");
         ocupado = false;
-        this.comensalActual = null; // Eliminar referencia al comensal actual
-        System.out.println("Mesa " + id + " ha sido liberada.");
-        notifyAll(); // Notificar a todos los hilos que están esperando
+        comensalActual = null;
+        recepcionista.notificarComensalEnEspera();
     }
 
     public int getIdMesa() {
@@ -64,10 +57,10 @@ public class Table {
     }
 
     public double getX() {
-        return mesaEntity != null ? mesaEntity.getX() : 0; // Devuelve X o 0 si no existe
+        return mesaEntity != null ? mesaEntity.getX() : 0;
     }
 
     public double getY() {
-        return mesaEntity != null ? mesaEntity.getY() : 0; // Devuelve Y o 0 si no existe
+        return mesaEntity != null ? mesaEntity.getY() : 0;
     }
 }
