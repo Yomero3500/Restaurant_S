@@ -49,26 +49,22 @@ public class Main extends GameApplication {
                 .view(createImageView("/assets/textures/background.jpeg", 1300, 850))
                 .buildAndAttach();
 
-        // Cambiar la cocina al lado izquierdo
         FXGL.entityBuilder()
-                .at(-80, 120) // Coordenadas ajustadas para mover la cocina a la izquierda
+                .at(-80, 120)
                 .view(createImageView("/assets/textures/kitchen.png", 500, 400))
                 .buildAndAttach();
 
-        // Cambiar el área de espera al lado derecho
         FXGL.entityBuilder()
-                .at(1150, 150) // Coordenadas ajustadas para mover el área de espera a la derecha
+                .at(1150, 150)
                 .view(createImageView("/assets/textures/waiting.png", 100, 500))
                 .buildAndAttach();
 
-        // Cambiar etiquetas
-        addLabel("Cocina", 70, 30); // Etiqueta para la cocina al lado izquierdo
-        addLabel("Área de espera", 1150, 30); // Etiqueta para el área de espera al lado derecho
+        addLabel("Cocina", 70, 30);
+        addLabel("Área de espera", 1150, 30);
         addLabel("Área de mesas", 550, 30);
 
         createTables();
     }
-
 
     private void createTables() {
         for (int i = 0; i < 4; i++) {
@@ -99,18 +95,18 @@ public class Main extends GameApplication {
 
     private void spawnChefs(int count) {
         for (int i = 0; i < count; i++) {
-            FXGL.spawn("chef", 100, 300 + i * 100); // Ajustar chefs al lado izquierdo
+            FXGL.spawn("chef", 100, 300 + i * 100);
         }
     }
 
     private void spawnClients(int count) {
         for (int i = 0; i < count; i++) {
-            FXGL.spawn("client", 1210, 190 + i * 50); // Ajustar clientes al lado derecho
+            FXGL.spawn("client", 1210, 190 + i * 50);
         }
     }
 
     private void spawnReceptionist() {
-        FXGL.spawn("receptionist", 1100, 130); // Ajustar recepcionista al lado derecho
+        FXGL.spawn("receptionist", 1100, 130);
     }
 
     private Image loadImage(String path) {

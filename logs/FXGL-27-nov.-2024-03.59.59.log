@@ -106,7 +106,7 @@ java.lang.RuntimeException: Initialization failed
 Caused by: java.lang.IllegalArgumentException: Invalid URL or resource not found
 	at javafx.scene.image.Image.validateUrl(Image.java:1120)
 	at javafx.scene.image.Image.<init>(Image.java:625)
-	at com.Restaurant.models.Client.<init>(Client.java:12)
+	at com.Restaurant.entities.Chef.Client.<init>(Client.java:12)
 	at com.Restaurant.factories.RestaurantFactory.newClient(RestaurantFactory.java:12)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
