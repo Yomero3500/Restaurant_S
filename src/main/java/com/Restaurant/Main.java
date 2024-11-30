@@ -21,7 +21,7 @@ public class Main extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1300);
         settings.setHeight(600);
-        settings.setTitle("Simulador Restaurante");
+        settings.setTitle("Simulador de Restaurante");
         settings.setVersion("0.1");
         settings.setMainMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory() {
