@@ -26,4 +26,9 @@ public class RestaurantFactory implements EntityFactory {
     public Entity newReceptionist(SpawnData data) {
         return new Receptionist(data);
     }
+
+    @Spawns("table")
+    public Entity newTable(SpawnData data) {
+        return new Table(data, "/assets/textures/table.png");
+    }
 }

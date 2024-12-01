@@ -7,6 +7,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -38,10 +39,16 @@ public class Main extends GameApplication {
 
     @Override
     protected void initGame() {
-        createGameEntities();
+        // Registra el EntityFactory primero
         FXGL.getGameWorld().addEntityFactory(new RestaurantFactory());
+
+        // Luego crea las entidades de tu juego
+        createGameEntities();
+
+        // Finalmente, genera las entidades iniciales
         spawnInitialEntities();
     }
+
 
     private void createGameEntities() {
         FXGL.entityBuilder()
@@ -69,13 +76,12 @@ public class Main extends GameApplication {
     private void createTables() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
-                FXGL.entityBuilder()
-                        .at(300 + j * 150, 110 + i * 120)
-                        .view(createImageView("/assets/textures/table.png", 70, 70))
-                        .buildAndAttach();
+                SpawnData data = new SpawnData(300 + j * 150, 110 + i * 120);
+                FXGL.spawn("table", data);
             }
         }
     }
+
 
     private void addLabel(String text, double x, double y) {
         Text label = new Text(text);
