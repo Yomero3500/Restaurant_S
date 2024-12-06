@@ -1,9 +1,9 @@
-package com.simulador.entidades;
+package com.simulador.entities;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.simulador.Observer.Observer;
-import com.simulador.modelos.Restaurant;
-import com.simulador.modelos.CustomersStats;
+import com.simulador.models.Restaurant;
+import com.simulador.models.CustomersStats;
 import javafx.geometry.Point2D;
 import java.util.Queue;
 import java.util.LinkedList;

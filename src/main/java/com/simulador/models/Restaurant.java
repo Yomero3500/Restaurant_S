@@ -1,4 +1,4 @@
-package com.simulador.modelos;
+package com.simulador.models;
 
 import com.simulador.Observer.Observer;
 

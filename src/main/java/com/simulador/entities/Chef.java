@@ -1,7 +1,7 @@
-package com.simulador.entidades;
+package com.simulador.entities;
 
-import com.simulador.modelos.Order;
-import com.simulador.modelos.monitores.MonitorOrder;
+import com.simulador.models.Order;
+import com.simulador.models.monitors.MonitorOrder;
 
 public class Chef implements Runnable {
     private final MonitorOrder orderQueueMonitor;

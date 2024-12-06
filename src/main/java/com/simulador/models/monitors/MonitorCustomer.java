@@ -1,6 +1,6 @@
-package com.simulador.modelos.monitores;
+package com.simulador.models.monitors;
 
-import com.simulador.entidades.Customer;
+import com.simulador.entities.Customer;
 
 import java.util.Arrays;
 

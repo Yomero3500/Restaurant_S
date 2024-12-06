@@ -1,11 +1,11 @@
-package com.simulador.entidades;
+package com.simulador.entities;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.modelos.CustomersStats;
-import com.simulador.modelos.Restaurant;
-import com.simulador.modelos.monitores.MonitorOrder;
-import com.simulador.modelos.monitores.MonitorCustomer;
+import com.simulador.models.CustomersStats;
+import com.simulador.models.Restaurant;
+import com.simulador.models.monitors.MonitorOrder;
+import com.simulador.models.monitors.MonitorCustomer;
 import javafx.geometry.Point2D;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;

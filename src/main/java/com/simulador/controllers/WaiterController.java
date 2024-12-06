@@ -3,7 +3,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.simulador.entidades.Waiter;
+import com.simulador.entities.Waiter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 

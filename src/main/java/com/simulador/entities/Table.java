@@ -1,4 +1,4 @@
-package com.simulador.entidades;
+package com.simulador.entities;
 
 import com.almasb.fxgl.entity.component.Component;
 import javafx.geometry.Point2D;

@@ -1,10 +1,10 @@
-package com.simulador.entidades;
+package com.simulador.entities;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.modelos.Order;
-import com.simulador.modelos.monitores.MonitorOrder;
-import com.simulador.modelos.monitores.MonitorCustomer;
+import com.simulador.models.Order;
+import com.simulador.models.monitors.MonitorOrder;
+import com.simulador.models.monitors.MonitorCustomer;
 import javafx.geometry.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Queue;

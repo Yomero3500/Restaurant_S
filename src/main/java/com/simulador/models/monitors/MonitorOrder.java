@@ -1,7 +1,7 @@
-package com.simulador.modelos.monitores;
+package com.simulador.models.monitors;
 
-import com.simulador.modelos.Order;
-import com.simulador.modelos.OrderStatus;
+import com.simulador.models.Order;
+import com.simulador.models.OrderStatus;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
