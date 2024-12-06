@@ -3,13 +3,13 @@ package com.simulador.entidades;
 import com.almasb.fxgl.entity.component.Component;
 import javafx.geometry.Point2D;
 
-public class Mesa extends Component {
+public class Table extends Component {
     private final int number;
     private final Point2D position;
     private boolean isOccupied;
-    private Comensal currentCustomer;
+    private Customer currentCustomer;
 
-    public Mesa(int number, Point2D position) {
+    public Table(int number, Point2D position) {
         this.number = number;
         this.position = position;
         this.isOccupied = false;
@@ -30,11 +30,11 @@ public class Mesa extends Component {
         this.isOccupied = false;
     }
 
-    public Comensal getCurrentCustomer() {
+    public Customer getCurrentCustomer() {
         return currentCustomer;
     }
 
-    public void setCurrentCustomer(Comensal customer) {
+    public void setCurrentCustomer(Customer customer) {
         this.currentCustomer = customer;
         this.isOccupied = (customer != null);
     }

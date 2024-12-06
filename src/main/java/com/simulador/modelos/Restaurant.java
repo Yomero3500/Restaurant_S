@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class Restaurante {
+public class Restaurant {
     public static final int TOTAL_TABLES = 10;
     private final boolean[] tables;
     private final ReentrantLock lock;
     private final Condition tableAvailable;
     private final List<Observer> observers;
 
-    public Restaurante() {
+    public Restaurant() {
         tables = new boolean[TOTAL_TABLES];
         lock = new ReentrantLock();
         tableAvailable = lock.newCondition();

@@ -8,10 +8,10 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.simulador.controllers.*;
 import com.simulador.entidades.*;
-import com.simulador.modelos.ComensalesStats;
-import com.simulador.modelos.monitores.ComensalesMonitor;
-import com.simulador.modelos.monitores.OrdenMonitor;
-import com.simulador.modelos.Restaurante;
+import com.simulador.modelos.CustomersStats;
+import com.simulador.modelos.monitores.MonitorCustomer;
+import com.simulador.modelos.monitores.MonitorOrder;
+import com.simulador.modelos.Restaurant;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -30,10 +30,10 @@ import com.simulador.utils.PoissonDistribution;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class Main extends GameApplication {
-    private Restaurante restaurantMonitor;
-    private OrdenMonitor orderQueueMonitor;
-    private ComensalesMonitor customerQueueMonitor;
-    private ComensalesStats customerStats;
+    private Restaurant restaurantMonitor;
+    private MonitorOrder orderQueueMonitor;
+    private MonitorCustomer customerQueueMonitor;
+    private CustomersStats customerStats;
     private final List<Entity> tables = new ArrayList<>();
     private ScheduledExecutorService customerSpawner;
     private int customerIdCounter = 0;
@@ -43,19 +43,19 @@ public class Main extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Juego.WINDOW_WIDTH);
-        settings.setHeight(Juego.WINDOW_HEIGHT);
+        settings.setWidth(RestaurantController.WINDOW_WIDTH);
+        settings.setHeight(RestaurantController.WINDOW_HEIGHT);
         settings.setTitle("Restaurante");
     }
 
     @Override
     protected void initGame() {
-        getGameWorld().addEntityFactory(new ComensalContro());
-        getGameWorld().addEntityFactory(new MeseroContro());
-        getGameWorld().addEntityFactory(new CocineroContro());
-        getGameWorld().addEntityFactory(new RecepcionistaContro());
-        getGameWorld().addEntityFactory(new CocinaContro());
-        getGameWorld().addEntityFactory(new Juego());
+        getGameWorld().addEntityFactory(new CustomerController());
+        getGameWorld().addEntityFactory(new WaiterController());
+        getGameWorld().addEntityFactory(new ChefController());
+        getGameWorld().addEntityFactory(new ReceptionistController());
+        getGameWorld().addEntityFactory(new KitchenController());
+        getGameWorld().addEntityFactory(new RestaurantController());
 
         Entity background = createBackgroundEntity();
         getGameWorld().addEntity(background);
@@ -111,10 +111,10 @@ public class Main extends GameApplication {
 
 
     private void initializeComponents() {
-        customerStats = new ComensalesStats();
-        restaurantMonitor = new Restaurante();
-        orderQueueMonitor = new OrdenMonitor();
-        customerQueueMonitor = new ComensalesMonitor();
+        customerStats = new CustomersStats();
+        restaurantMonitor = new Restaurant();
+        orderQueueMonitor = new MonitorOrder();
+        customerQueueMonitor = new MonitorCustomer();
         poissonDistribution = new PoissonDistribution(0.2); // Ajusta este valor para cambiar la frecuencia de llegada
     }
 
@@ -157,16 +157,16 @@ public class Main extends GameApplication {
 
     private void initializeKitchen() {
         getGameWorld().spawn("kitchen",
-                new SpawnData(CocinaContro.KITCHEN_X, CocinaContro.KITCHEN_Y)
+                new SpawnData(KitchenController.KITCHEN_X, KitchenController.KITCHEN_Y)
         );
     }
 
     private void initializeTables() {
-        for (int i = 0; i < Juego.TOTAL_TABLES; i++) {
+        for (int i = 0; i < RestaurantController.TOTAL_TABLES; i++) {
             int row = i / 5;
             int col = i % 5;
-            double x = 200 + col * (Juego.SPRITE_SIZE * 2);
-            double y = 3 + row * (Juego.SPRITE_SIZE * 2);
+            double x = 200 + col * (RestaurantController.SPRITE_SIZE * 2);
+            double y = 3 + row * (RestaurantController.SPRITE_SIZE * 2);
 
             SpawnData data = new SpawnData(x, y);
             data.put("tableNumber", i);
@@ -177,8 +177,8 @@ public class Main extends GameApplication {
 
 
     private void initializeReceptionist() {
-        Point2D receptionistPos = new Point2D(RecepcionistaContro.RECEPTIONIST_X, RecepcionistaContro.RECEPTIONIST_Y);
-        Recepcionista receptionistComponent = new Recepcionista(
+        Point2D receptionistPos = new Point2D(ReceptionistController.RECEPTIONIST_X, ReceptionistController.RECEPTIONIST_Y);
+        Receptionist receptionistComponent = new Receptionist(
                 restaurantMonitor,
                 receptionistPos,
                 customerStats
@@ -190,13 +190,13 @@ public class Main extends GameApplication {
     }
 
     private void initializeWaiters() {
-        for (int i = 0; i < MeseroContro.TOTAL_WAITERS; i++) {
+        for (int i = 0; i < WaiterController.TOTAL_WAITERS; i++) {
             Point2D startPos = new Point2D(
-                    MeseroContro.WAITER_X + Juego.SPRITE_SIZE,
-                    MeseroContro.WAITER_Y - ((i + 1) * Juego.SPRITE_SIZE * 1.5)
+                    WaiterController.WAITER_X + RestaurantController.SPRITE_SIZE,
+                    WaiterController.WAITER_Y - ((i + 1) * RestaurantController.SPRITE_SIZE * 1.5)
             );
 
-            Mesero waiter = new Mesero(
+            Waiter waiter = new Waiter(
                     i,
                     orderQueueMonitor,
                     customerQueueMonitor,
@@ -211,12 +211,12 @@ public class Main extends GameApplication {
     }
 
     private void initializeCooks() {
-        double kitchenY = CocinaContro.KITCHEN_Y;
-        for (int i = 0; i < CocineroContro.TOTAL_COOKS; i++) {
-            Cocinero cook = new Cocinero(i, orderQueueMonitor);
+        double kitchenY = KitchenController.KITCHEN_Y;
+        for (int i = 0; i < ChefController.TOTAL_COOKS; i++) {
+            Chef cook = new Chef(i, orderQueueMonitor);
             SpawnData data = new SpawnData(
-                    CocinaContro.KITCHEN_X,
-                    kitchenY + (i * Juego.SPRITE_SIZE)
+                    KitchenController.KITCHEN_X,
+                    kitchenY + (i * RestaurantController.SPRITE_SIZE)
             );
             data.put("cookComponent", cook);
             Entity cookEntity = getGameWorld().spawn("cook", data);
@@ -249,7 +249,7 @@ public class Main extends GameApplication {
     }
 
     private void spawnCustomer(int id) {
-        Comensal customer = new Comensal(
+        Customer customer = new Customer(
                 id,
                 restaurantMonitor,
                 orderQueueMonitor,
@@ -257,7 +257,7 @@ public class Main extends GameApplication {
                 customerStats,
                 tables
         );
-        SpawnData data = new SpawnData(Juego.ENTRANCE_X, Juego.ENTRANCE_Y);
+        SpawnData data = new SpawnData(RestaurantController.ENTRANCE_X, RestaurantController.ENTRANCE_Y);
         data.put("customerComponent", customer);
         getGameWorld().spawn("customer", data);
     }

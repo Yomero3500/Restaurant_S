@@ -3,14 +3,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.simulador.entidades.Mesa;
+import com.simulador.entidades.Table;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
-public class Juego implements EntityFactory {
+public class RestaurantController implements EntityFactory {
     public static final int WINDOW_WIDTH = 700;
     public static final int WINDOW_HEIGHT = 500;
     public static final int TOTAL_TABLES = 30;
@@ -28,13 +28,13 @@ public class Juego implements EntityFactory {
     @Spawns("table")
     public Entity spawnTable(SpawnData data) {
         ImageView imageView = new ImageView(new Image("img/Mesa/mesa.png"));
-        imageView.setFitWidth(Juego.SPRITE_SIZE * 2);
-        imageView.setFitHeight(Juego.SPRITE_SIZE * 2);
+        imageView.setFitWidth(RestaurantController.SPRITE_SIZE * 2);
+        imageView.setFitHeight(RestaurantController.SPRITE_SIZE * 2);
 
         return entityBuilder()
                 .at(data.getX(), data.getY())
                 .viewWithBBox(imageView)
-                .with(new Mesa(data.get("tableNumber"), new Point2D(data.getX(), data.getY())))
+                .with(new Table(data.get("tableNumber"), new Point2D(data.getX(), data.getY())))
                 .build();
     }
 }

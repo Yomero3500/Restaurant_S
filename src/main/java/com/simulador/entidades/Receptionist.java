@@ -2,25 +2,25 @@ package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.simulador.Observer.Observer;
-import com.simulador.modelos.Restaurante;
-import com.simulador.modelos.ComensalesStats;
+import com.simulador.modelos.Restaurant;
+import com.simulador.modelos.CustomersStats;
 import javafx.geometry.Point2D;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class Recepcionista extends Component implements Observer {
+public class Receptionist extends Component implements Observer {
     private final Point2D position;
-    private final Restaurante restaurantMonitor;
-    private final Queue<Comensal> waitingCustomers;
+    private final Restaurant restaurantMonitor;
+    private final Queue<Customer> waitingCustomers;
     private final ReentrantLock lock;
     private final Condition customerWaiting;
     private boolean isBusy;
-    private Comensal currentCustomer;
-    private final ComensalesStats customerStats;
+    private Customer currentCustomer;
+    private final CustomersStats customerStats;
 
-    public Recepcionista(Restaurante restaurantMonitor, Point2D position, ComensalesStats customerStats) {
+    public Receptionist(Restaurant restaurantMonitor, Point2D position, CustomersStats customerStats) {
         this.restaurantMonitor = restaurantMonitor;
         this.position = position;
         this.customerStats = customerStats;
@@ -38,7 +38,7 @@ public class Recepcionista extends Component implements Observer {
         new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    Comensal customer = getNextCustomer();
+                    Customer customer = getNextCustomer();
                     if (customer != null) {
                         handleCustomer(customer);
                     }
@@ -51,7 +51,7 @@ public class Recepcionista extends Component implements Observer {
         }).start();
     }
 
-    public void addCustomerToQueue(Comensal customer) {
+    public void addCustomerToQueue(Customer customer) {
         lock.lock();
         try {
             waitingCustomers.add(customer);
@@ -61,7 +61,7 @@ public class Recepcionista extends Component implements Observer {
         }
     }
 
-    private Comensal getNextCustomer() throws InterruptedException {
+    private Customer getNextCustomer() throws InterruptedException {
         lock.lock();
         try {
             while (waitingCustomers.isEmpty()) {
@@ -75,7 +75,7 @@ public class Recepcionista extends Component implements Observer {
         }
     }
 
-    private void handleCustomer(Comensal customer) {
+    private void handleCustomer(Customer customer) {
         try {
             Thread.sleep(200);
 
@@ -121,7 +121,7 @@ public class Recepcionista extends Component implements Observer {
         }
     }
 
-    public Comensal getCurrentCustomer() {
+    public Customer getCurrentCustomer() {
         lock.lock();
         try {
             return currentCustomer;

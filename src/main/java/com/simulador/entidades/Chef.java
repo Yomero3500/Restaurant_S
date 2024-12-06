@@ -1,14 +1,14 @@
 package com.simulador.entidades;
 
-import com.simulador.modelos.Orden;
-import com.simulador.modelos.monitores.OrdenMonitor;
+import com.simulador.modelos.Order;
+import com.simulador.modelos.monitores.MonitorOrder;
 
-public class Cocinero implements Runnable {
-    private final OrdenMonitor orderQueueMonitor;
+public class Chef implements Runnable {
+    private final MonitorOrder orderQueueMonitor;
     private volatile boolean isResting;
-    private Orden currentOrder;
+    private Order currentOrder;
 
-    public Cocinero(int id, OrdenMonitor orderQueueMonitor) {
+    public Chef(int id, MonitorOrder orderQueueMonitor) {
         this.orderQueueMonitor = orderQueueMonitor;
         this.isResting = true;
     }

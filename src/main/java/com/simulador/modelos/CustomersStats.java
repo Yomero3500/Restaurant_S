@@ -2,13 +2,13 @@ package com.simulador.modelos;
 
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class ComensalesStats {
+public class CustomersStats {
     private final SimpleIntegerProperty customersWaitingTable;
     private final SimpleIntegerProperty customersWaitingFood;
     private final SimpleIntegerProperty customersEating;
     private final SimpleIntegerProperty customersAtTables;
 
-    public ComensalesStats() {
+    public CustomersStats() {
         customersWaitingTable = new SimpleIntegerProperty(0);
         customersWaitingFood = new SimpleIntegerProperty(0);
         customersEating = new SimpleIntegerProperty(0);

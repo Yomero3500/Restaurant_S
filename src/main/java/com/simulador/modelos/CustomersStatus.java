@@ -1,6 +1,6 @@
 package com.simulador.modelos;
 
-public enum ComensalesStatus {
+public enum CustomersStatus {
     Wait,
     Moving,
     Out

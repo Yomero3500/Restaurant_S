@@ -8,15 +8,15 @@ import javafx.scene.image.ImageView;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
-public class CocinaContro implements EntityFactory {
+public class KitchenController implements EntityFactory {
     public static final double KITCHEN_X = 10;
     public static final double KITCHEN_Y = 200;
 
     @Spawns("kitchen")
     public Entity spawnKitchen(SpawnData data) {
         ImageView imageView = new ImageView(new Image("img/Cocina/cocina.png"));
-        imageView.setFitWidth(Juego.SPRITE_SIZE * 7);
-        imageView.setFitHeight(Juego.SPRITE_SIZE * 10);
+        imageView.setFitWidth(RestaurantController.SPRITE_SIZE * 7);
+        imageView.setFitHeight(RestaurantController.SPRITE_SIZE * 10);
 
         return entityBuilder()
                 .at(data.getX(), data.getY())

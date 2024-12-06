@@ -1,13 +1,13 @@
 package com.simulador.modelos;
 
-public class Orden {
+public class Order {
     private final int id;
     private final int tableNumber;
     private final long preparationTime;
     private OrderStatus status;
 
 
-    public Orden(int id, int tableNumber) {
+    public Order(int id, int tableNumber) {
         this.id = id;
         this.tableNumber = tableNumber;
         this.status = OrderStatus.PENDING;

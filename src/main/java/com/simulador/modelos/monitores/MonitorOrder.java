@@ -1,21 +1,21 @@
 package com.simulador.modelos.monitores;
 
-import com.simulador.modelos.Orden;
+import com.simulador.modelos.Order;
 import com.simulador.modelos.OrderStatus;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class OrdenMonitor {
-    private final Queue<Orden> pendingOrders;
-    private final Queue<Orden> inProcessOrders;
-    private final Queue<Orden> readyOrders;
+public class MonitorOrder {
+    private final Queue<Order> pendingOrders;
+    private final Queue<Order> inProcessOrders;
+    private final Queue<Order> readyOrders;
     private final ReentrantLock lock;
     private final Condition orderAvailable;
     private final Condition foodReady;
 
-    public OrdenMonitor() {
+    public MonitorOrder() {
         pendingOrders = new LinkedList<>();
         inProcessOrders = new LinkedList<>();
         readyOrders = new LinkedList<>();
@@ -24,7 +24,7 @@ public class OrdenMonitor {
         foodReady = lock.newCondition();
     }
 
-    public void addOrder(Orden order) {
+    public void addOrder(Order order) {
         lock.lock();
         try {
             pendingOrders.add(order);
@@ -34,13 +34,13 @@ public class OrdenMonitor {
         }
     }
 
-    public Orden getNextOrder() throws InterruptedException {
+    public Order getNextOrder() throws InterruptedException {
         lock.lock();
         try {
             while (pendingOrders.isEmpty()) {
                 orderAvailable.await();
             }
-            Orden order = pendingOrders.poll();
+            Order order = pendingOrders.poll();
             order.setStatus(OrderStatus.IN_PROCESS);
             inProcessOrders.add(order);
             return order;
@@ -49,7 +49,7 @@ public class OrdenMonitor {
         }
     }
 
-    public void markOrderAsReady(Orden order) {
+    public void markOrderAsReady(Order order) {
         lock.lock();
         try {
             order.setStatus(OrderStatus.READY);
@@ -61,10 +61,10 @@ public class OrdenMonitor {
         }
     }
 
-    public Orden checkReadyOrder(int tableNumber) throws InterruptedException {
+    public Order checkReadyOrder(int tableNumber) throws InterruptedException {
         lock.lock();
         try {
-            for (Orden order : readyOrders) {
+            for (Order order : readyOrders) {
                 if (order.getTableNumber() == tableNumber) {
                     readyOrders.remove(order);
                     order.setStatus(OrderStatus.DELIVERED);

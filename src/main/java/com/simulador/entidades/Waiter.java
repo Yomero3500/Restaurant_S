@@ -2,32 +2,32 @@ package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.modelos.Orden;
-import com.simulador.modelos.monitores.OrdenMonitor;
-import com.simulador.modelos.monitores.ComensalesMonitor;
+import com.simulador.modelos.Order;
+import com.simulador.modelos.monitores.MonitorOrder;
+import com.simulador.modelos.monitores.MonitorCustomer;
 import javafx.geometry.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.List;
-import com.simulador.controllers.MeseroContro;
-import com.simulador.controllers.CocinaContro;
-import com.simulador.controllers.Juego;
+import com.simulador.controllers.WaiterController;
+import com.simulador.controllers.KitchenController;
+import com.simulador.controllers.RestaurantController;
 
-public class Mesero extends Component {
+public class Waiter extends Component {
     private static final AtomicInteger orderIdGenerator = new AtomicInteger(0);
     private final Object taskLock = new Object();
     private final Object stateLock = new Object();
 
-    private final OrdenMonitor orderQueueMonitor;
-    private final ComensalesMonitor customerQueueMonitor;
+    private final MonitorOrder orderQueueMonitor;
+    private final MonitorCustomer customerQueueMonitor;
     private final Point2D restPosition;
     private Point2D targetPosition;
     private boolean isMoving = false;
     private boolean isBusy = false;
     private WaiterState state = WaiterState.RESTING;
     private final Queue<Task> taskQueue = new LinkedList<>();
-    private static final double SPEED = MeseroContro.WAITER_SPEED;
+    private static final double SPEED = WaiterController.WAITER_SPEED;
     private final List<Entity> tables;
 
     public enum WaiterState {
@@ -51,7 +51,7 @@ public class Mesero extends Component {
         }
     }
 
-    public Mesero(int id, OrdenMonitor orderQueueMonitor, ComensalesMonitor customerQueueMonitor,
+    public Waiter(int id, MonitorOrder orderQueueMonitor, MonitorCustomer customerQueueMonitor,
                   Point2D restPosition, List<Entity> tables) {
         this.orderQueueMonitor = orderQueueMonitor;
         this.customerQueueMonitor = customerQueueMonitor;
@@ -93,7 +93,7 @@ public class Mesero extends Component {
                         if (!isBusy) {
                             if (!checkAndDeliverReadyOrders()) {
                                 if (customerQueueMonitor.hasWaitingCustomers()) {
-                                    ComensalesMonitor.CustomerRequest request =
+                                    MonitorCustomer.CustomerRequest request =
                                             customerQueueMonitor.getNextCustomer();
                                     if (request != null) {
                                         serveCustomer(request.customer, request.tableNumber);
@@ -113,7 +113,7 @@ public class Mesero extends Component {
         }).start();
     }
 
-    private void serveCustomer(Comensal customer, int tableNumber) {
+    private void serveCustomer(Customer customer, int tableNumber) {
         synchronized (stateLock) {
             isBusy = true;
             System.out.println("Sirviendo al cliente: " + customer + " en la mesa " + tableNumber);
@@ -166,9 +166,9 @@ public class Mesero extends Component {
     }
 
     private void takeOrderFromCustomer(int tableNumber) {
-        Orden orden = new Orden(orderIdGenerator.incrementAndGet(), tableNumber);
+        Order orden = new Order(orderIdGenerator.incrementAndGet(), tableNumber);
 
-        Point2D kitchenPos = new Point2D(CocinaContro.KITCHEN_X - 50, CocinaContro.KITCHEN_Y);
+        Point2D kitchenPos = new Point2D(KitchenController.KITCHEN_X - 50, KitchenController.KITCHEN_Y);
         addTask(new Task(
                 WaiterState.MOVING_TO_KITCHEN,
                 kitchenPos,
@@ -179,12 +179,12 @@ public class Mesero extends Component {
         ));
     }
 
-    private void deliverOrder(Orden order) {
+    private void deliverOrder(Order order) {
         synchronized (stateLock) {
             isBusy = true;
             int tableNumber = order.getTableNumber();
 
-            Point2D kitchenPos = new Point2D(CocinaContro.KITCHEN_X - 50, CocinaContro.KITCHEN_Y);
+            Point2D kitchenPos = new Point2D(KitchenController.KITCHEN_X - 50, KitchenController.KITCHEN_Y);
             addTask(new Task(
                     WaiterState.MOVING_TO_KITCHEN,
                     kitchenPos,
@@ -193,9 +193,9 @@ public class Mesero extends Component {
                             calculateTablePosition(tableNumber),
                             () -> {
                                 for (Entity tableEntity : tables) {
-                                    Mesa table = tableEntity.getComponent(Mesa.class);
+                                    Table table = tableEntity.getComponent(Table.class);
                                     if (table != null && table.getNumber() == tableNumber) {
-                                        Comensal customer = table.getCurrentCustomer();
+                                        Customer customer = table.getCurrentCustomer();
                                         if (customer != null) {
                                             customer.startEating();
                                         }
@@ -213,8 +213,8 @@ public class Mesero extends Component {
         try {
             synchronized (stateLock) {
                 if (!isBusy) {
-                    for (int i = 0; i < Juego.TOTAL_TABLES; i++) {
-                        Orden readyOrder = orderQueueMonitor.checkReadyOrder(i);
+                    for (int i = 0; i < RestaurantController.TOTAL_TABLES; i++) {
+                        Order readyOrder = orderQueueMonitor.checkReadyOrder(i);
                         if (readyOrder != null) {
                             deliverOrder(readyOrder);
                             return true;
@@ -244,8 +244,8 @@ public class Mesero extends Component {
         int row = tableNumber / 5;
         int col = tableNumber % 5;
         return new Point2D(
-                300 + col * (Juego.SPRITE_SIZE * 2),
-                100 + row * (Juego.SPRITE_SIZE * 2)
+                300 + col * (RestaurantController.SPRITE_SIZE * 2),
+                100 + row * (RestaurantController.SPRITE_SIZE * 2)
         );
     }
 

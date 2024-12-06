@@ -2,28 +2,28 @@ package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.modelos.ComensalesStats;
-import com.simulador.modelos.Restaurante;
-import com.simulador.modelos.monitores.OrdenMonitor;
-import com.simulador.modelos.monitores.ComensalesMonitor;
+import com.simulador.modelos.CustomersStats;
+import com.simulador.modelos.Restaurant;
+import com.simulador.modelos.monitores.MonitorOrder;
+import com.simulador.modelos.monitores.MonitorCustomer;
 import javafx.geometry.Point2D;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
-import com.simulador.controllers.ComensalContro;
-import com.simulador.controllers.Juego;
-import com.simulador.controllers.RecepcionistaContro;
+import com.simulador.controllers.CustomerController;
+import com.simulador.controllers.RestaurantController;
+import com.simulador.controllers.ReceptionistController;
 
-public class Comensal extends Component {
-    private final Restaurante restaurantMonitor;
-    private final OrdenMonitor orderQueueMonitor;
-    private final ComensalesMonitor customerQueueMonitor;
-    private final ComensalesStats customerStats;
+public class Customer extends Component {
+    private final Restaurant restaurantMonitor;
+    private final MonitorOrder orderQueueMonitor;
+    private final MonitorCustomer customerQueueMonitor;
+    private final CustomersStats customerStats;
     private final List<Entity> tables;
     private int tableNumber = -1;
     private Point2D targetPosition;
     private boolean isMoving = false;
     private CustomerState state = CustomerState.ENTERING;
-    private static final double SPEED = ComensalContro.CUSTOMER_SPEED;
+    private static final double SPEED = CustomerController.CUSTOMER_SPEED;
     private final int id;
     private final Object stateLock = new Object();
 
@@ -39,8 +39,8 @@ public class Comensal extends Component {
         LEAVING
     }
 
-    public Comensal(int id, Restaurante restaurantMonitor, OrdenMonitor orderQueueMonitor,
-                    ComensalesMonitor customerQueueMonitor, ComensalesStats customerStats, List<Entity> tables) {
+    public Customer(int id, Restaurant restaurantMonitor, MonitorOrder orderQueueMonitor,
+                    MonitorCustomer customerQueueMonitor, CustomersStats customerStats, List<Entity> tables) {
         this.id = id;
         this.restaurantMonitor = restaurantMonitor;
         this.orderQueueMonitor = orderQueueMonitor;
@@ -51,7 +51,7 @@ public class Comensal extends Component {
 
     @Override
     public void onAdded() {
-        entity.setPosition(Juego.ENTRANCE_X, Juego.ENTRANCE_Y);
+        entity.setPosition(RestaurantController.ENTRANCE_X, RestaurantController.ENTRANCE_Y);
         moveToReceptionist();
         customerStats.incrementWaitingForTable();
     }
@@ -83,7 +83,7 @@ public class Comensal extends Component {
                     state = CustomerState.WAITING_FOR_RECEPTIONIST;
                     Entity receptionistEntity = findReceptionist();
                     if (receptionistEntity != null) {
-                        Recepcionista receptionist = receptionistEntity.getComponent(Recepcionista.class);
+                        Receptionist receptionist = receptionistEntity.getComponent(Receptionist.class);
                         receptionist.addCustomerToQueue(this);
                     }
                 }
@@ -106,7 +106,7 @@ public class Comensal extends Component {
     }
 
     private Entity findReceptionist() {
-        for (Entity entity : entity.getWorld().getEntitiesByComponent(Recepcionista.class)) {
+        for (Entity entity : entity.getWorld().getEntitiesByComponent(Receptionist.class)) {
             return entity;
         }
         return null;
@@ -140,8 +140,8 @@ public class Comensal extends Component {
             new Thread(() -> {
                 try {
                     Thread.sleep(ThreadLocalRandom.current().nextLong(
-                            Juego.MIN_EATING_TIME,
-                            Juego.MAX_EATING_TIME
+                            RestaurantController.MIN_EATING_TIME,
+                            RestaurantController.MAX_EATING_TIME
                     ));
 
                     synchronized (stateLock) {
@@ -150,7 +150,7 @@ public class Comensal extends Component {
                                 restaurantMonitor.releaseTable(tableNumber);
 
                                 for (Entity tableEntity : tables) {
-                                    Mesa table = tableEntity.getComponent(Mesa.class);
+                                    Table table = tableEntity.getComponent(Table.class);
                                     if (table != null && table.getNumber() == tableNumber) {
                                         table.release();
                                         break;
@@ -158,7 +158,7 @@ public class Comensal extends Component {
                                 }
                             }
                             state = CustomerState.LEAVING;
-                            targetPosition = new Point2D(Juego.ENTRANCE_X, Juego.ENTRANCE_Y);
+                            targetPosition = new Point2D(RestaurantController.ENTRANCE_X, RestaurantController.ENTRANCE_Y);
                             isMoving = true;
                         }
                     }
@@ -173,8 +173,8 @@ public class Comensal extends Component {
         synchronized (stateLock) {
             state = CustomerState.ENTERING;
             targetPosition = new Point2D(
-                    RecepcionistaContro.RECEPTIONIST_X - Juego.SPRITE_SIZE * 2,
-                    RecepcionistaContro.RECEPTIONIST_Y
+                    ReceptionistController.RECEPTIONIST_X - RestaurantController.SPRITE_SIZE * 2,
+                    ReceptionistController.RECEPTIONIST_Y
             );
             isMoving = true;
         }
@@ -185,7 +185,7 @@ public class Comensal extends Component {
         isMoving = true;
 
         for (Entity tableEntity : tables) {
-            Mesa table = tableEntity.getComponent(Mesa.class);
+            Table table = tableEntity.getComponent(Table.class);
             if (table != null && table.getNumber() == tableNumber) {
                 table.setCurrentCustomer(this);
                 break;
@@ -197,8 +197,8 @@ public class Comensal extends Component {
         int row = tableNumber / 5;
         int col = tableNumber % 5;
         return new Point2D(
-                300 + col * (Juego.SPRITE_SIZE * 2),
-                100 + row * (Juego.SPRITE_SIZE * 2)
+                300 + col * (RestaurantController.SPRITE_SIZE * 2),
+                100 + row * (RestaurantController.SPRITE_SIZE * 2)
         );
     }
 

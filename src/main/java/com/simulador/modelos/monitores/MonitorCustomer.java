@@ -1,11 +1,10 @@
 package com.simulador.modelos.monitores;
 
-import com.simulador.entidades.Comensal;
+import com.simulador.entidades.Customer;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class ComensalesMonitor {
+public class MonitorCustomer {
     private final int CAPACIDAD = 10; // Tamaño fijo del buffer
     private final CustomerRequest[] buffer;
     private int lleno; // Contador de elementos llenos
@@ -18,11 +17,11 @@ public class ComensalesMonitor {
 
 
     public static class CustomerRequest {
-        public final Comensal customer;
+        public final Customer customer;
         public final int tableNumber;
         public final long arrivalTime;
 
-        public CustomerRequest(Comensal customer, int tableNumber) {
+        public CustomerRequest(Customer customer, int tableNumber) {
             this.customer = customer;
             this.tableNumber = tableNumber;
             this.arrivalTime = System.currentTimeMillis();
@@ -38,7 +37,7 @@ public class ComensalesMonitor {
         }
     }
 
-    public ComensalesMonitor() {
+    public MonitorCustomer() {
         buffer = new CustomerRequest[CAPACIDAD];
         lleno = 0;
         indiceInsercion = 0;
@@ -52,7 +51,7 @@ public class ComensalesMonitor {
                 '}';
     }
 
-    public synchronized void addCustomer(Comensal customer, int tableNumber) {
+    public synchronized void addCustomer(Customer customer, int tableNumber) {
         while (lleno == CAPACIDAD) { // Esperar si el buffer está lleno
             try {
                 this.wait();
