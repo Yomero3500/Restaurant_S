@@ -1,4 +1,4 @@
-package com.simulador.models;
+package com.simulador.modelos;
 
 import javafx.beans.property.SimpleIntegerProperty;
 

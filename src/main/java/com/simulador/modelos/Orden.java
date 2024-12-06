@@ -1,5 +1,4 @@
-package com.simulador.models;
-
+package com.simulador.modelos;
 
 public class Orden {
     private final int id;

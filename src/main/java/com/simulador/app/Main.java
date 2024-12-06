@@ -8,8 +8,10 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.simulador.controllers.*;
 import com.simulador.entidades.*;
-import com.simulador.models.*;
-import com.simulador.models.monitores.*;
+import com.simulador.modelos.ComensalesStats;
+import com.simulador.modelos.monitores.ComensalesMonitor;
+import com.simulador.modelos.monitores.OrdenMonitor;
+import com.simulador.modelos.Restaurante;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -28,7 +30,7 @@ import com.simulador.utils.PoissonDistribution;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class Main extends GameApplication {
-    private RestauranteMonitor restaurantMonitor;
+    private Restaurante restaurantMonitor;
     private OrdenMonitor orderQueueMonitor;
     private ComensalesMonitor customerQueueMonitor;
     private ComensalesStats customerStats;
@@ -110,7 +112,7 @@ public class Main extends GameApplication {
 
     private void initializeComponents() {
         customerStats = new ComensalesStats();
-        restaurantMonitor = new RestauranteMonitor();
+        restaurantMonitor = new Restaurante();
         orderQueueMonitor = new OrdenMonitor();
         customerQueueMonitor = new ComensalesMonitor();
         poissonDistribution = new PoissonDistribution(0.2); // Ajusta este valor para cambiar la frecuencia de llegada

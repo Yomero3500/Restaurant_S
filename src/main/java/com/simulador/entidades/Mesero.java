@@ -2,9 +2,9 @@ package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.models.Orden;
-import com.simulador.models.monitores.OrdenMonitor;
-import com.simulador.models.monitores.ComensalesMonitor;
+import com.simulador.modelos.Orden;
+import com.simulador.modelos.monitores.OrdenMonitor;
+import com.simulador.modelos.monitores.ComensalesMonitor;
 import javafx.geometry.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Queue;
@@ -166,14 +166,14 @@ public class Mesero extends Component {
     }
 
     private void takeOrderFromCustomer(int tableNumber) {
-        Orden order = new Orden(orderIdGenerator.incrementAndGet(), tableNumber);
+        Orden orden = new Orden(orderIdGenerator.incrementAndGet(), tableNumber);
 
         Point2D kitchenPos = new Point2D(CocinaContro.KITCHEN_X - 50, CocinaContro.KITCHEN_Y);
         addTask(new Task(
                 WaiterState.MOVING_TO_KITCHEN,
                 kitchenPos,
                 () -> {
-                    orderQueueMonitor.addOrder(order);
+                    orderQueueMonitor.addOrder(orden);
                     resetState();
                 }
         ));

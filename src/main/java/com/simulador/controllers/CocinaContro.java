@@ -9,14 +9,14 @@ import javafx.scene.image.ImageView;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class CocinaContro implements EntityFactory {
-    public static final double KITCHEN_X = 895;
-    public static final double KITCHEN_Y = 500;
+    public static final double KITCHEN_X = 10;
+    public static final double KITCHEN_Y = 200;
 
     @Spawns("kitchen")
     public Entity spawnKitchen(SpawnData data) {
         ImageView imageView = new ImageView(new Image("img/Cocina/cocina.png"));
-        imageView.setFitWidth(Juego.SPRITE_SIZE * 2);
-        imageView.setFitHeight(Juego.SPRITE_SIZE * 2);
+        imageView.setFitWidth(Juego.SPRITE_SIZE * 7);
+        imageView.setFitHeight(Juego.SPRITE_SIZE * 10);
 
         return entityBuilder()
                 .at(data.getX(), data.getY())

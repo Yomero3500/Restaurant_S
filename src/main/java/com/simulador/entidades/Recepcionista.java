@@ -1,17 +1,18 @@
 package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.models.monitores.RestauranteMonitor;
-import com.simulador.models.ComensalesStats;
+import com.simulador.Observer.Observer;
+import com.simulador.modelos.Restaurante;
+import com.simulador.modelos.ComensalesStats;
 import javafx.geometry.Point2D;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class Recepcionista extends Component {
+public class Recepcionista extends Component implements Observer {
     private final Point2D position;
-    private final RestauranteMonitor restaurantMonitor;
+    private final Restaurante restaurantMonitor;
     private final Queue<Comensal> waitingCustomers;
     private final ReentrantLock lock;
     private final Condition customerWaiting;
@@ -19,7 +20,7 @@ public class Recepcionista extends Component {
     private Comensal currentCustomer;
     private final ComensalesStats customerStats;
 
-    public Recepcionista(RestauranteMonitor restaurantMonitor, Point2D position, ComensalesStats customerStats) {
+    public Recepcionista(Restaurante restaurantMonitor, Point2D position, ComensalesStats customerStats) {
         this.restaurantMonitor = restaurantMonitor;
         this.position = position;
         this.customerStats = customerStats;
@@ -28,6 +29,8 @@ public class Recepcionista extends Component {
         this.customerWaiting = lock.newCondition();
         this.isBusy = false;
 
+        // Se registra como observador del monitor
+        restaurantMonitor.addObserver(this);
         startReceptionistBehavior();
     }
 
@@ -95,6 +98,17 @@ public class Recepcionista extends Component {
             } finally {
                 lock.unlock();
             }
+        }
+    }
+
+    @Override
+    public void onTableAvailable() {
+        System.out.println("Recepcionista: Una mesa está disponible.");
+        lock.lock();
+        try {
+            customerWaiting.signal();
+        } finally {
+            lock.unlock();
         }
     }
 

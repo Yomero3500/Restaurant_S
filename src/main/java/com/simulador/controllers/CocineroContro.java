@@ -12,7 +12,7 @@ import java.util.Random;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class CocineroContro implements EntityFactory {
-    public static final int TOTAL_COOKS = 2;
+    public static final int TOTAL_COOKS = 3;
 
     @Spawns("cook")
     public Entity spawnCook(SpawnData data) {
@@ -23,8 +23,8 @@ public class CocineroContro implements EntityFactory {
         Random rand = new Random();
         int randomIndex = rand.nextInt(imagePaths.size());
         ImageView imageView = new ImageView(new Image(imagePaths.get(randomIndex)));
-        imageView.setFitWidth(Juego.SPRITE_SIZE * 2);
-        imageView.setFitHeight(Juego.SPRITE_SIZE * 2);
+        imageView.setFitWidth(Juego.SPRITE_SIZE * 5);
+        imageView.setFitHeight(Juego.SPRITE_SIZE * 5);
 
         return entityBuilder()
                 .at(data.getX(), data.getY())

@@ -2,10 +2,10 @@ package com.simulador.entidades;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.simulador.models.ComensalesStats;
-import com.simulador.models.monitores.RestauranteMonitor;
-import com.simulador.models.monitores.OrdenMonitor;
-import com.simulador.models.monitores.ComensalesMonitor;
+import com.simulador.modelos.ComensalesStats;
+import com.simulador.modelos.Restaurante;
+import com.simulador.modelos.monitores.OrdenMonitor;
+import com.simulador.modelos.monitores.ComensalesMonitor;
 import javafx.geometry.Point2D;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.simulador.controllers.Juego;
 import com.simulador.controllers.RecepcionistaContro;
 
 public class Comensal extends Component {
-    private final RestauranteMonitor restaurantMonitor;
+    private final Restaurante restaurantMonitor;
     private final OrdenMonitor orderQueueMonitor;
     private final ComensalesMonitor customerQueueMonitor;
     private final ComensalesStats customerStats;
@@ -39,7 +39,7 @@ public class Comensal extends Component {
         LEAVING
     }
 
-    public Comensal(int id, RestauranteMonitor restaurantMonitor, OrdenMonitor orderQueueMonitor,
+    public Comensal(int id, Restaurante restaurantMonitor, OrdenMonitor orderQueueMonitor,
                     ComensalesMonitor customerQueueMonitor, ComensalesStats customerStats, List<Entity> tables) {
         this.id = id;
         this.restaurantMonitor = restaurantMonitor;

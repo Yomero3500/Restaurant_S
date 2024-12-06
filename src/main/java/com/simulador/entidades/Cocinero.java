@@ -1,7 +1,7 @@
 package com.simulador.entidades;
 
-import com.simulador.models.Orden;
-import com.simulador.models.monitores.OrdenMonitor;
+import com.simulador.modelos.Orden;
+import com.simulador.modelos.monitores.OrdenMonitor;
 
 public class Cocinero implements Runnable {
     private final OrdenMonitor orderQueueMonitor;

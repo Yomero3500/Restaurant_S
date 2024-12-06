@@ -1,4 +1,4 @@
-package com.simulador.models;
+package com.simulador.modelos;
 
 public enum OrderStatus {
     PENDING,

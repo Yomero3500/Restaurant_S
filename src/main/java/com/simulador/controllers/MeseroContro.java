@@ -12,9 +12,9 @@ import javafx.scene.image.ImageView;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class MeseroContro implements EntityFactory {
-    public static int TOTAL_WAITERS = 2;
-    public static double WAITER_X = 580;
-    public static double WAITER_Y = 650;
+    public static int TOTAL_WAITERS = 4;
+    public static double WAITER_X = 20;
+    public static double WAITER_Y = 200;
     public static double WAITER_SPEED = 180.0;
 
     @Spawns("waiter")

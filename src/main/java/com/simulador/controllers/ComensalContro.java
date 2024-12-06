@@ -14,8 +14,8 @@ import java.util.Random;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class ComensalContro implements EntityFactory {
-    public static final double CUSTOMER_SPEED = 150.0;
-    private static final int SPRITE_SIZE = 64;
+    public static final double CUSTOMER_SPEED = 300.0;
+    private static final int SPRITE_SIZE =30;
 
     @Spawns("customer")
     public Entity spawnCustomer(SpawnData data) {
