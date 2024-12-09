@@ -2,68 +2,57 @@ package com.simulador.models.monitors;
 
 import com.simulador.models.Order;
 import com.simulador.models.OrderStatus;
+
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MonitorOrder {
     private final Queue<Order> pendingOrders;
     private final Queue<Order> inProcessOrders;
     private final Queue<Order> readyOrders;
-    private final ReentrantLock lock;
-    private final Condition orderAvailable;
-    private final Condition foodReady;
+    private final Object orderLock;
+    private final Object foodLock;
 
     public MonitorOrder() {
         pendingOrders = new LinkedList<>();
         inProcessOrders = new LinkedList<>();
         readyOrders = new LinkedList<>();
-        lock = new ReentrantLock();
-        orderAvailable = lock.newCondition();
-        foodReady = lock.newCondition();
+        orderLock = new Object();
+        foodLock = new Object();
     }
 
     public void addOrder(Order order) {
-        lock.lock();
-        try {
+        synchronized (orderLock) {
             pendingOrders.add(order);
-            orderAvailable.signal();
-        } finally {
-            lock.unlock();
+            orderLock.notify();
         }
     }
 
     public Order getNextOrder() throws InterruptedException {
-        lock.lock();
-        try {
+        synchronized (orderLock) {
             while (pendingOrders.isEmpty()) {
-                orderAvailable.await();
+                orderLock.wait();
             }
             Order order = pendingOrders.poll();
             order.setStatus(OrderStatus.IN_PROCESS);
             inProcessOrders.add(order);
             return order;
-        } finally {
-            lock.unlock();
         }
     }
 
     public void markOrderAsReady(Order order) {
-        lock.lock();
-        try {
-            order.setStatus(OrderStatus.READY);
-            inProcessOrders.remove(order);
-            readyOrders.add(order);
-            foodReady.signalAll();
-        } finally {
-            lock.unlock();
+        synchronized (foodLock) {
+            synchronized (orderLock) {
+                order.setStatus(OrderStatus.READY);
+                inProcessOrders.remove(order);
+                readyOrders.add(order);
+            }
+            foodLock.notifyAll();
         }
     }
 
     public Order checkReadyOrder(int tableNumber) throws InterruptedException {
-        lock.lock();
-        try {
+        synchronized (foodLock) {
             for (Order order : readyOrders) {
                 if (order.getTableNumber() == tableNumber) {
                     readyOrders.remove(order);
@@ -72,8 +61,6 @@ public class MonitorOrder {
                 }
             }
             return null;
-        } finally {
-            lock.unlock();
         }
     }
 }

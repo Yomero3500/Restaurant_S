@@ -102,7 +102,6 @@ public class Main extends GameApplication {
         AnchorPane.setLeftAnchor(backgroundImageView, 0.0);
         root.getChildren().add(backgroundImageView);
 
-        // crea una entidad con el AnchorPane como componente
         Entity backgroundEntity = new Entity();
         backgroundEntity.addComponent(new BackgroundComponent(root));
 
@@ -115,7 +114,7 @@ public class Main extends GameApplication {
         restaurantMonitor = new Restaurant();
         orderQueueMonitor = new MonitorOrder();
         customerQueueMonitor = new MonitorCustomer();
-        poissonDistribution = new PoissonDistribution(0.2); // Ajusta este valor para cambiar la frecuencia de llegada
+        poissonDistribution = new PoissonDistribution(0.2);
     }
 
     private void initializeUI() {
