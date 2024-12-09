@@ -12,7 +12,7 @@ public class PoissonDistribution {
 
     public int nextInt() {
         double L = Math.exp(-lambda);
-        double p = 1.0;
+        double p = 2.0;
         int k = 0;
 
         do {

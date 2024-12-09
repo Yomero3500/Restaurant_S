@@ -12,7 +12,7 @@ import java.util.Random;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class ChefController implements EntityFactory {
-    public static final int TOTAL_COOKS = 3;
+    public static final int TOTAL_COOKS = 4;
 
     @Spawns("cook")
     public Entity spawnCook(SpawnData data) {

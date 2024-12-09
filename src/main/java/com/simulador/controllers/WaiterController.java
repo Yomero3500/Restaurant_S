@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 public class WaiterController implements EntityFactory {
-    public static int TOTAL_WAITERS = 4;
+    public static int TOTAL_WAITERS = 3;
     public static double WAITER_X = 20;
     public static double WAITER_Y = 200;
     public static double WAITER_SPEED = 180.0;

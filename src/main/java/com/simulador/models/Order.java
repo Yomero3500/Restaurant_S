@@ -11,7 +11,7 @@ public class Order {
         this.id = id;
         this.tableNumber = tableNumber;
         this.status = OrderStatus.PENDING;
-        this.preparationTime = (long) (Math.random() * 5000 + 3000); // Entre 3 y 8 segundos
+        this.preparationTime = (long) (Math.random() * 8000 + 3000); // Entre 3 y 8 segundos
     }
 
     public int getId() { return id; }

@@ -5,18 +5,21 @@ import com.simulador.Observer.Observer;
 import com.simulador.models.Restaurant;
 import com.simulador.models.CustomersStats;
 import javafx.geometry.Point2D;
+
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
+import java.util.logging.Logger;
 
 public class Receptionist extends Component implements Observer {
+    private static final Logger logger = Logger.getLogger(Receptionist.class.getName());
     private final Point2D position;
     private final Restaurant restaurantMonitor;
     private final Queue<Customer> waitingCustomers;
     private final ReentrantLock lock;
     private final Condition customerWaiting;
-    private boolean isBusy;
+    private volatile boolean isBusy; // volatile para acceso concurrente
     private Customer currentCustomer;
     private final CustomersStats customerStats;
 
@@ -41,11 +44,14 @@ public class Receptionist extends Component implements Observer {
                     Customer customer = getNextCustomer();
                     if (customer != null) {
                         handleCustomer(customer);
+                    } else {
+                        // Pequeña pausa si no hay clientes para evitar un bucle apretado
+                        Thread.sleep(500);
                     }
-                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break;
+                    logger.warning("Recepcionista interrumpido.");
+                    break; // Sale del bucle si hay interrupción
                 }
             }
         }).start();
@@ -55,7 +61,7 @@ public class Receptionist extends Component implements Observer {
         lock.lock();
         try {
             waitingCustomers.add(customer);
-            customerWaiting.signal();
+            customerWaiting.signal(); // Notifica a un recepcionista en espera
         } finally {
             lock.unlock();
         }
@@ -64,9 +70,14 @@ public class Receptionist extends Component implements Observer {
     private Customer getNextCustomer() throws InterruptedException {
         lock.lock();
         try {
-            while (waitingCustomers.isEmpty()) {
+            while (waitingCustomers.isEmpty() && !Thread.currentThread().isInterrupted()) { // Manejo de interrupción en la espera
                 customerWaiting.await();
             }
+            // Verifica si se interrumpió después de despertar
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
+
             currentCustomer = waitingCustomers.poll();
             isBusy = true;
             return currentCustomer;
@@ -74,6 +85,7 @@ public class Receptionist extends Component implements Observer {
             lock.unlock();
         }
     }
+
 
     private void handleCustomer(Customer customer) {
         try {
@@ -84,13 +96,17 @@ public class Receptionist extends Component implements Observer {
             if (tableNumber != -1) {
                 restaurantMonitor.occupyTable(tableNumber);
                 customer.assignTable(tableNumber);
+                logger.info("Cliente asignado a la mesa " + tableNumber);
             } else {
                 customerStats.incrementWaitingForTable();
                 customer.waitForTable();
+                logger.info("Cliente esperando mesa.");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            logger.warning("Recepcionista interrumpido atendiendo a un cliente.");
         } finally {
+            // Asegurar que isBusy se actualiza incluso con interrupciones
             lock.lock();
             try {
                 currentCustomer = null;
@@ -103,22 +119,18 @@ public class Receptionist extends Component implements Observer {
 
     @Override
     public void onTableAvailable() {
-        System.out.println("Recepcionista: Una mesa está disponible.");
+        logger.info("Recepcionista: Una mesa está disponible.");
         lock.lock();
         try {
-            customerWaiting.signal();
+            customerWaiting.signal(); // Notifica a un recepcionista en espera
         } finally {
             lock.unlock();
         }
     }
 
+
     public boolean isBusy() {
-        lock.lock();
-        try {
-            return isBusy;
-        } finally {
-            lock.unlock();
-        }
+        return isBusy; //  No necesita bloqueo si isBusy es volatile
     }
 
     public Customer getCurrentCustomer() {
@@ -131,11 +143,11 @@ public class Receptionist extends Component implements Observer {
     }
 
     public Point2D getPosition() {
-        return position;
+        return position; // Point2D es inmutable, no necesita bloqueo.
     }
 
     @Override
     public void onUpdate(double tpf) {
-
-    }
+        // Método vacío en la interfaz, no se usa
+        }
 }
